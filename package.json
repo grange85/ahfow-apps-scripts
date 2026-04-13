@@ -1,0 +1,24 @@
+{
+  "name": "apps-scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "CheckBrokenLinks.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grange85/ahfow-apps-scripts.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/grange85/ahfow-apps-scripts/issues"
+  },
+  "homepage": "https://github.com/grange85/ahfow-apps-scripts#readme",
+  "devDependencies": {
+    "@types/google-apps-script": "^2.0.8"
+  }
+}
