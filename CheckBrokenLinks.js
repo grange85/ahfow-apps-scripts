@@ -55,10 +55,14 @@ function checkBrokenLinks() {
     if (status.startsWith("OK")) ok++;
     else if (status.startsWith("BROKEN") || status.startsWith("ERROR")) broken++;
 
-    sheet.getRange(rowNum, COL.status + 1).setValue(statusreview[0] ?? "");
-    sheet.getRange(rowNum, COL.review + 1).setValue(statusreview[1] ?? "") 
-    sheet.getRange(rowNum, COL.checked + 1).setValue(new Date());
-    checked++;
+    if (DRY_RUN) {
+      Logger.log(`DRY RUN: ${url} → ${status}`);
+    } else {
+	  sheet.getRange(rowNum, COL.status + 1).setValue(statusreview[0] ?? "");
+      sheet.getRange(rowNum, COL.review + 1).setValue(statusreview[1] ?? "") 
+	  sheet.getRange(rowNum, COL.checked + 1).setValue(new Date());
+	}
+	checked++;
 
     // Pause between requests to avoid rate limiting
     Utilities.sleep(500);

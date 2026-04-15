@@ -2,6 +2,7 @@
 // CONFIGURATION
 // ============================================================
 
+const DRY_RUN = true;
 const GITHUB_TOKEN_PROPERTY = "GITHUB_TOKEN"; // stored in Script Properties
 const REPO = "grange85/ahfow-database";
 const BRANCH = "main";
