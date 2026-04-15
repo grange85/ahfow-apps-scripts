@@ -109,8 +109,6 @@ const EXPORT_CONFIG = [
       { name: "bookmarks", path: "_data/gigography/live-show-bookmarks.csv" },
     ]
   },
-
-
 ];
 
 // Set true to also export to Drive as a backup
@@ -274,15 +272,12 @@ function sheetToCSV(sheet) {
 
   // Log headers to help debug
   const headers = data[0];
-  Logger.log(`Headers in "${sheet.getName()}": ${JSON.stringify(headers)}`);
-
+  
   // Trim whitespace before checking prefix
   const includedCols = headers
     .map((h, i) => ({ h: h.trim(), i }))
     .filter(({ h }) => !h.startsWith("_"))
     .map(({ i }) => i);
-
-  Logger.log(`Included column indices: ${JSON.stringify(includedCols)}`);
 
   const filtered = data.map(row => includedCols.map(i => row[i]));
 

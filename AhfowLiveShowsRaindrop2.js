@@ -14,7 +14,7 @@ function syncFromRaindrop() {
 
   while (true) {
     const response = UrlFetchApp.fetch(
-      `https://api.raindrop.io/rest/v1/raindrops/0?search=%23ahfow-live`,
+      `https://api.raindrop.io/rest/v1/raindrops/0?search=%23ahfow-live&perpage=50&page=${page}`,
       {
         headers: {
           Authorization: `Bearer ${token}`
@@ -24,13 +24,12 @@ function syncFromRaindrop() {
     );
 
     const data = JSON.parse(response.getContentText());
-
+    Logger.log(`No. of bookmarks: ${data.items.length}`);
     if (!data.items || data.items.length === 0) break;
 
     for (const item of data.items) {
       const url = item.link;
       if (existingUrls.has(url)) continue; // already in sheet
-      Logger.log(url);
       // Strip utm_* and other unwanted params
       const cleanUrl = stripQueryParams(url);
       const prefixes = ['luna-', 'galaxie-500-', 'dean-wareham-', 'damon-and-naomi-', 'dean-and-britta-'];
@@ -43,7 +42,7 @@ function syncFromRaindrop() {
       const dateAdded = Utilities.formatDate(new Date(item.created), Session.getScriptTimeZone(), "yyyy-MM-dd");
 
       // Append: timestamp left empty (no form submission), slug, url, title, notes, archived, date_added
-      newRows.push([slug, cleanUrl, title, notes, "false", dateAdded, excerpt]);
+      newRows.push([slug, cleanUrl, title, notes, "false", dateAdded, excerpt, "OK"]);
       //Logger.log([slug, cleanUrl, title, notes, "false", dateAdded, excerpt]);
       existingUrls.add(url); // prevent dupes within this batch
       newCount++;

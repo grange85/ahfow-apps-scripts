@@ -8,7 +8,8 @@ const COL = {
   date_added: 5,
   excerpt: 6,
   status: 7,
-  checked: 8
+  review: 8,
+  checked: 9
 };
 
 // Domains that block automated requests - skip and flag for manual review
@@ -30,14 +31,6 @@ function checkBrokenLinks() {
   const header = data[0];
   const rows = data.slice(1);
 
-  Logger.log(`Total rows: ${rows.length}`);
-  Logger.log(`First row: ${JSON.stringify(rows[0])}`);
-  Logger.log(`url value: "${rows[0][COL.url]}"`);
-  Logger.log(`archived value: "${rows[0][COL.archived]}"`);
-  Logger.log(`isValidUrl: ${isValidUrl(rows[0][COL.url])}`);
-  Logger.log(`archived check: ${String(rows[0][COL.archived]).toLowerCase() === 'true'}`);
-
-
   let checked = 0, broken = 0, ok = 0, skipped = 0;
 
   rows.forEach((row, i) => {
@@ -48,20 +41,22 @@ function checkBrokenLinks() {
 
     const rowNum = i + 2;
     let status;
+    let statusreview;
 
     if (isYouTubeUrl(url)) {
       status = checkYouTubeUrl(url);
     } else if (isSkippedDomain(url)) {
-      status = "SKIPPED (manual check)";
+      status = "SKIPPED|manual check";
       skipped++;
     } else {
       status = fetchUrl(url);
     }
-
+    statusreview = status.split("|");
     if (status.startsWith("OK")) ok++;
     else if (status.startsWith("BROKEN") || status.startsWith("ERROR")) broken++;
 
-    sheet.getRange(rowNum, COL.status + 1).setValue(status);
+    sheet.getRange(rowNum, COL.status + 1).setValue(statusreview[0] ?? "");
+    sheet.getRange(rowNum, COL.review + 1).setValue(statusreview[1] ?? "") 
     sheet.getRange(rowNum, COL.checked + 1).setValue(new Date());
     checked++;
 
@@ -89,12 +84,12 @@ function fetchUrl(url) {
         "Accept-Language": "en-US,en;q=0.5",      }
     });
     const code = response.getResponseCode();
-    if (code === 429) return "OK? (rate limited - manual check advised)";
-    if (code === 403) return "OK? (403 - blocked by server, manual check advised)";
-    if (code === 404) return "BROKEN (404 - video not found)";
-    return code >= 200 && code < 400 ? `OK (${code})` : `BROKEN (${code})`;
+    if (code === 429) return "OK|rate limited - manual check advised";
+    if (code === 403) return "OK|403 - blocked by server, manual check advised";
+    if (code === 404) return "BROKEN|404 - page not found";
+    return code >= 200 && code < 400 ? `OK|${code}` : `BROKEN|${code}`;
   } catch (e) {
-    return `ERROR: ${e.message.substring(0, 50)}`;
+    return `ERROR|${e.message.substring(0, 50)}`;
   }
 }
 
@@ -116,13 +111,13 @@ function checkYouTubeUrl(url) {
         "Accept-Language": "en-US,en;q=0.5",      }
     });
     const code = response.getResponseCode();
-    if (code === 429) return "OK? (rate limited - manual check advised)";
-    if (code === 403) return "OK? (403 - blocked by server, manual check advised)";
-    if (code === 404) return "BROKEN (404 - video not found)";
-    if (code >= 200 && code < 400) return `OK (${code})`;
-    return `BROKEN (${code})`;
+    if (code === 429) return "OK|rate limited - manual check advised";
+    if (code === 403) return "OK|403 - blocked by server, manual check advised";
+    if (code === 404) return "BROKEN|404 - video not found";
+    if (code >= 200 && code < 400) return `OK|${code}`;
+    return `BROKEN|${code}`;
   } catch (e) {
-    return `ERROR: ${e.message.substring(0, 50)}`;
+    return `ERROR|${e.message.substring(0, 50)}`;
   }
 }
 
