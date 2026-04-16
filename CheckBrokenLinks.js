@@ -12,7 +12,7 @@ const COL = {
   checked: 9
 };
 
-// Domains that block automated requests - skip and flag for manual review
+// Domains that block automated requests - skip and flag for manual review and add any other problems
 const SKIP_DOMAINS = [
   'spotify.com',
   'instagram.com', 

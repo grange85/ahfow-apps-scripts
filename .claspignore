@@ -1,3 +1,12 @@
-**/**
-!*.gs
+# Ignore everything by default
+**/*
+client_secret*
+# Allow the manifest file
 !appsscript.json
+
+# Allow all javascript files
+!**/*.js
+
+# If you use HTML files for sidebars/dialogs, uncomment the line below:
+# !**/*.html
+
