@@ -246,18 +246,27 @@ function commitAllToGitHub(files) {
 
   // 6. Create the commit
   const changedNames = changedFiles.map(f => f.path.split("/").pop()).join(", ");
-  const newCommit = ghFetch(`/git/commits`, "POST", {
-    message: `Update ${changedFiles.length} file(s): ${changedNames}`,
-    tree: newTree.sha,
-    parents: [headCommitSha]
-  });
+  if (DRY_RUN) {
+
+  } else {
+    const newCommit = ghFetch(`/git/commits`, "POST", {
+      message: `Update ${changedFiles.length} file(s): ${changedNames}`,
+      tree: newTree.sha,
+      parents: [headCommitSha]
+    });
+  }
 
   // 7. Update the branch ref
-  ghFetch(`/git/refs/heads/${BRANCH}`, "PATCH", {
-    sha: newCommit.sha
-  });
+  if (DRY_RUN) {
+    Logger.log(`DRY RUN: Update ${changedFiles.length} file(s): ${changedNames}`);
+    Logger.log(`DRY RUN: Committed ${changedFiles.length} changed file(s) in one commit: ${newCommit.sha}`);
+  } else {
+    ghFetch(`/git/refs/heads/${BRANCH}`, "PATCH", {
+      sha: newCommit.sha
+    });
+    Logger.log(`\nCommitted ${changedFiles.length} changed file(s) in one commit: ${newCommit.sha}`);
+  }
 
-  Logger.log(`\nCommitted ${changedFiles.length} changed file(s) in one commit: ${newCommit.sha}`);
 }
 
 

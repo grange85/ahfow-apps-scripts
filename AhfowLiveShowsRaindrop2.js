@@ -42,8 +42,11 @@ function syncFromRaindrop() {
       const dateAdded = Utilities.formatDate(new Date(item.created), Session.getScriptTimeZone(), "yyyy-MM-dd");
 
       // Append: timestamp left empty (no form submission), slug, url, title, notes, archived, date_added
-      newRows.push([slug, cleanUrl, title, notes, "false", dateAdded, excerpt, "OK"]);
-      //Logger.log([slug, cleanUrl, title, notes, "false", dateAdded, excerpt]);
+      if (DRY_RUN) {
+        Logger.log(`DRY RUN: ${title} added`);
+      } else {
+        newRows.push([slug, cleanUrl, title, notes, "false", dateAdded, excerpt, "OK"]);
+      }
       existingUrls.add(url); // prevent dupes within this batch
       newCount++;
     }
